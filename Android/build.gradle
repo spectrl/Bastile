@@ -39,6 +39,8 @@ dependencies {
 
     compile "com.squareup.okhttp:okhttp:${okhttp_version}"
     compile "com.squareup.okhttp:okhttp-urlconnection:${okhttp_version}"
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
 
     compile 'com.jakewharton.timber:timber:4.3.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
