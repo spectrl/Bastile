@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -20,7 +22,10 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     private static final String EXTRA_IS_ACTION_DRAWER_OPENED = "extra_is_action_drawer_opened";
     private static final boolean DEFAULT_IS_ACTION_DRAWER_OPENED = true;
+    private static final String EXTRA_IS_LAUNCHED = "is_launched";
+    private static final long ANIM_DURATION = 500;
 
+    private boolean isLaunched;
     private FlightDataFragment flightData;
 
     @Override
@@ -41,6 +46,7 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.CustomActionBarTheme_Transparent);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flight);
 
@@ -48,7 +54,7 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
         //Add the flight data fragment
         flightData = (FlightDataFragment) fm.findFragmentById(R.id.flight_data_container);
-        if(flightData == null){
+        if (flightData == null) {
             Bundle args = new Bundle();
             args.putBoolean(FlightDataFragment.EXTRA_SHOW_ACTION_DRAWER_TOGGLE, true);
 
@@ -70,10 +76,27 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
         boolean isActionDrawerOpened = DEFAULT_IS_ACTION_DRAWER_OPENED;
         if (savedInstanceState != null) {
             isActionDrawerOpened = savedInstanceState.getBoolean(EXTRA_IS_ACTION_DRAWER_OPENED, isActionDrawerOpened);
+            isLaunched = savedInstanceState.getBoolean(EXTRA_IS_LAUNCHED);
+        }
+
+        // Launch screen animation setup - will be triggered in onWindowFocusChanged
+        if (!isLaunched) {
+            final View decoy = findViewById(R.id.launch_decoy);
+            decoy.setVisibility(View.VISIBLE);
         }
 
         if (isActionDrawerOpened)
             openActionDrawer();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (!hasFocus) { return; }
+        if (!isLaunched) {
+            launch();
+            isLaunched = true;
+        }
     }
 
     @Override
@@ -97,6 +120,7 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(EXTRA_IS_ACTION_DRAWER_OPENED, isActionDrawerOpened());
+        outState.putBoolean(EXTRA_IS_LAUNCHED, isLaunched);
     }
 
     @Override
@@ -185,5 +209,33 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     private void resetActionDrawerBottomMargin(){
         updateActionDrawerBottomMargin((int) getResources().getDimension(R.dimen.action_drawer_margin_bottom));
+    }
+
+    private void launch() {
+        if (isLaunched) {
+            return;
+        }
+
+        final View decoy = findViewById(R.id.launch_decoy);
+        final long delay = 200;
+        ViewCompat.animate(decoy)
+                .alpha(0)
+                .setStartDelay(delay)
+                .setDuration(ANIM_DURATION - delay)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        decoy.setVisibility(View.GONE);
+                    }
+                })
+                .start();
+
+        final View launchImage = findViewById(R.id.launch_image);
+        ViewCompat.animate(launchImage)
+                .scaleX(0)
+                .scaleY(0)
+                .setDuration(ANIM_DURATION)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
     }
 }

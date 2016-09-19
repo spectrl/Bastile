@@ -25,6 +25,10 @@
 
     </style>
 
+    <style name="CustomActionBarTheme.Launch">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
     <style name="CustomDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTitleBackgroundStyle">@android:color/transparent</item>
