@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -20,6 +22,7 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     private static final String EXTRA_IS_ACTION_DRAWER_OPENED = "extra_is_action_drawer_opened";
     private static final boolean DEFAULT_IS_ACTION_DRAWER_OPENED = true;
+    private static final long ANIM_DURATION = 500;
 
     private FlightDataFragment flightData;
 
@@ -37,6 +40,14 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
         if (flightData != null)
             flightData.onDrawerOpened();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (!hasFocus) { return; }
+        fade();
+
+        super.onWindowFocusChanged(hasFocus);
     }
 
     @Override
@@ -186,5 +197,30 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     private void resetActionDrawerBottomMargin(){
         updateActionDrawerBottomMargin((int) getResources().getDimension(R.dimen.action_drawer_margin_bottom));
+    }
+
+    private void fade() {
+        final View decoy = findViewById(R.id.launch_decoy);
+        final View launchImage = findViewById(R.id.launch_image);
+        final long delay = 200;
+
+        ViewCompat.animate(launchImage)
+                .scaleX(0)
+                .scaleY(0)
+                .setDuration(ANIM_DURATION)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
+
+        ViewCompat.animate(decoy)
+                .alpha(0)
+                .setStartDelay(delay)
+                .setDuration(ANIM_DURATION - delay)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        decoy.setVisibility(View.GONE);
+                    }
+                })
+                .start();
     }
 }
