@@ -15,7 +15,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.google.android.gms.location.LocationServices
 import com.o3dr.services.android.lib.util.googleApi.GoogleApiClientManager
-import com.squareup.okhttp.Request
+import okhttp3.Request
 import org.droidplanner.android.R
 import org.droidplanner.android.fragments.widget.TowerWidget
 import org.droidplanner.android.fragments.widget.TowerWidgets
