@@ -22,8 +22,10 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     private static final String EXTRA_IS_ACTION_DRAWER_OPENED = "extra_is_action_drawer_opened";
     private static final boolean DEFAULT_IS_ACTION_DRAWER_OPENED = true;
+    private static final String EXTRA_IS_LAUNCHED = "is_launched";
     private static final long ANIM_DURATION = 500;
 
+    private boolean isLaunched;
     private FlightDataFragment flightData;
 
     @Override
@@ -44,10 +46,12 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        if (!hasFocus) { return; }
-        fade();
-
         super.onWindowFocusChanged(hasFocus);
+        if (!hasFocus) { return; }
+        if (!isLaunched) {
+            launch();
+            isLaunched = true;
+        }
     }
 
     @Override
@@ -60,7 +64,7 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
         //Add the flight data fragment
         flightData = (FlightDataFragment) fm.findFragmentById(R.id.flight_data_container);
-        if(flightData == null){
+        if (flightData == null) {
             Bundle args = new Bundle();
             args.putBoolean(FlightDataFragment.EXTRA_SHOW_ACTION_DRAWER_TOGGLE, true);
 
@@ -82,6 +86,8 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
         boolean isActionDrawerOpened = DEFAULT_IS_ACTION_DRAWER_OPENED;
         if (savedInstanceState != null) {
             isActionDrawerOpened = savedInstanceState.getBoolean(EXTRA_IS_ACTION_DRAWER_OPENED, isActionDrawerOpened);
+            isLaunched = savedInstanceState.getBoolean(EXTRA_IS_LAUNCHED);
+            launch();
         }
 
         if (isActionDrawerOpened)
@@ -109,6 +115,7 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(EXTRA_IS_ACTION_DRAWER_OPENED, isActionDrawerOpened());
+        outState.putBoolean(EXTRA_IS_LAUNCHED, isLaunched);
     }
 
     @Override
@@ -199,18 +206,15 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
         updateActionDrawerBottomMargin((int) getResources().getDimension(R.dimen.action_drawer_margin_bottom));
     }
 
-    private void fade() {
+    private void launch() {
         final View decoy = findViewById(R.id.launch_decoy);
-        final View launchImage = findViewById(R.id.launch_image);
+        if (isLaunched) {
+            decoy.setVisibility(View.GONE);
+            return;
+        }
+
         final long delay = 200;
-
-        ViewCompat.animate(launchImage)
-                .scaleX(0)
-                .scaleY(0)
-                .setDuration(ANIM_DURATION)
-                .setInterpolator(new DecelerateInterpolator())
-                .start();
-
+        decoy.setVisibility(View.VISIBLE);
         ViewCompat.animate(decoy)
                 .alpha(0)
                 .setStartDelay(delay)
@@ -221,6 +225,14 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
                         decoy.setVisibility(View.GONE);
                     }
                 })
+                .start();
+
+        final View launchImage = findViewById(R.id.launch_image);
+        ViewCompat.animate(launchImage)
+                .scaleX(0)
+                .scaleY(0)
+                .setDuration(ANIM_DURATION)
+                .setInterpolator(new DecelerateInterpolator())
                 .start();
     }
 }
