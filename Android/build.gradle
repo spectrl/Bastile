@@ -80,7 +80,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'org.droidplanner.android'
+        applicationId 'com.spectrl.bastile'
         minSdkVersion android_build_min_sdk_version
         targetSdkVersion android_build_target_sdk_version
         versionCode computeVersionCode(versionMajor, versionMinor, versionPatch, versionBuild)
