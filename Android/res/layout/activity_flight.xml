@@ -25,7 +25,8 @@
         android:id="@+id/launch_decoy"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorPrimary">
+        android:background="?colorPrimary"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/launch_image"

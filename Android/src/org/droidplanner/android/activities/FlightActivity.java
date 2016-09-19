@@ -45,16 +45,6 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (!hasFocus) { return; }
-        if (!isLaunched) {
-            launch();
-            isLaunched = true;
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.CustomActionBarTheme_Transparent);
         super.onCreate(savedInstanceState);
@@ -87,11 +77,26 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
         if (savedInstanceState != null) {
             isActionDrawerOpened = savedInstanceState.getBoolean(EXTRA_IS_ACTION_DRAWER_OPENED, isActionDrawerOpened);
             isLaunched = savedInstanceState.getBoolean(EXTRA_IS_LAUNCHED);
-            launch();
+        }
+
+        // Launch screen animation setup - will be triggered in onWindowFocusChanged
+        if (!isLaunched) {
+            final View decoy = findViewById(R.id.launch_decoy);
+            decoy.setVisibility(View.VISIBLE);
         }
 
         if (isActionDrawerOpened)
             openActionDrawer();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (!hasFocus) { return; }
+        if (!isLaunched) {
+            launch();
+            isLaunched = true;
+        }
     }
 
     @Override
@@ -207,14 +212,12 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
     }
 
     private void launch() {
-        final View decoy = findViewById(R.id.launch_decoy);
         if (isLaunched) {
-            decoy.setVisibility(View.GONE);
             return;
         }
 
+        final View decoy = findViewById(R.id.launch_decoy);
         final long delay = 200;
-        decoy.setVisibility(View.VISIBLE);
         ViewCompat.animate(decoy)
                 .alpha(0)
                 .setStartDelay(delay)
