@@ -41,6 +41,7 @@ public class FlightActivity extends DrawerNavigationUI implements SlidingUpPanel
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.CustomActionBarTheme_Transparent);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flight);
 
