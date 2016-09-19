@@ -6,16 +6,16 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.OkUrlFactory;
-
 import org.droidplanner.android.maps.providers.google_map.tiles.mapbox.MapboxUtils;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.net.ssl.SSLSocketFactory;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+import okhttp3.OkUrlFactory;
 
 /**
  * Created by Fredia Huya-Kouadio on 5/11/15.
@@ -65,13 +65,14 @@ public class NetworkUtils {
     }
 
     public static HttpURLConnection getHttpURLConnection(final URL url, final Cache cache, final SSLSocketFactory sslSocketFactory) {
-        OkHttpClient client = new OkHttpClient();
+        final OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
         if (cache != null) {
-            client.setCache(cache);
+            clientBuilder.cache(cache);
         }
         if (sslSocketFactory != null) {
-            client.setSslSocketFactory(sslSocketFactory);
+            clientBuilder.sslSocketFactory(sslSocketFactory);
         }
+        final OkHttpClient client = clientBuilder.build();
         HttpURLConnection connection = new OkUrlFactory(client).open(url);
         connection.setRequestProperty("User-Agent", MapboxUtils.getUserAgent());
         return connection;
