@@ -37,10 +37,8 @@ dependencies {
     compile files('libs/sius-0.3.1-SNAPSHOT.jar')
     compile files('libs/BaiduLBS_Android.jar')
 
-    compile "com.squareup.okhttp:okhttp:${okhttp_version}"
-    compile "com.squareup.okhttp:okhttp-urlconnection:${okhttp_version}"
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
+    compile "com.squareup.okhttp3:okhttp:${okhttp_version}"
+    compile "com.squareup.okhttp3:okhttp-urlconnection:${okhttp_version}"
 
     compile 'com.jakewharton.timber:timber:4.3.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
